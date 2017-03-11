@@ -36,7 +36,7 @@ import sqlite3
 import numpy as np # get it at: http://numpy.scipy.org/
 # path to the Million Song Dataset subset (uncompressed)
 # CHANGE IT TO YOUR LOCAL CONFIGURATION
-msd_subset_path='E:\Devin\Desktop\MillionSongSubset'
+msd_subset_path='/home/devin/Desktop/MillionSongSubset'
 msd_subset_data_path=os.path.join(msd_subset_path,'data')
 msd_subset_addf_path=os.path.join(msd_subset_path,'AdditionalFiles')
 assert os.path.isdir(msd_subset_path),'wrong path' # sanity check
