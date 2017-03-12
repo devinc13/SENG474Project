@@ -1,63 +1,40 @@
 """
-Tutorial for the Million Song Dataset
-
+Adapted from the Tutorial for the Million Song Dataset
 by Thierry Bertin-Mahieux (2011) Columbia University
    tb2332@columbia.edu
    Copyright 2011 T. Bertin-Mahieux, All Rights Reserved
-
-This tutorial will walk you through a quick experiment
-using the Million Song Dataset (MSD). We will actually be working
-on the 10K songs subset for speed issues, but the code should
-transpose seamlessly.
-
-In this tutorial, we do simple metadata analysis. We look at
-which artist has the most songs by iterating over the whole
-dataset and using an SQLite database.
-
-You need to have the MSD code downloaded from GITHUB.
-See the MSD website for details:
-http://labrosa.ee.columbia.edu/millionsong/
-
-If you have any questions regarding the dataset or this tutorial,
-please first take a look at the website. Send us an email
-if you haven't found the answer.
-
-Note: this tutorial is developed using Python 2.6
-      on an Ubuntu machine. PDF created using 'pyreport'.
 """
 
-# usual imports
 import os
 import sys
 import time
 import glob
 import datetime
 import sqlite3
-import numpy as np # get it at: http://numpy.scipy.org/
-# path to the Million Song Dataset subset (uncompressed)
-# CHANGE IT TO YOUR LOCAL CONFIGURATION
+import numpy as np
+import re
+
+# Set this - path to the Million Song Dataset subset (uncompressed)
 msd_subset_path='/home/devin/Desktop/MillionSongSubset'
 msd_subset_data_path=os.path.join(msd_subset_path,'data')
 msd_subset_addf_path=os.path.join(msd_subset_path,'AdditionalFiles')
-assert os.path.isdir(msd_subset_path),'wrong path' # sanity check
-# path to the Million Song Dataset code
-# CHANGE IT TO YOUR LOCAL CONFIGURATION
-msd_code_path='.'
-assert os.path.isdir(msd_code_path),'wrong path' # sanity check
-# we add some paths to python so we can import MSD code
-# Ubuntu: you can change the environment variable PYTHONPATH
-# in your .bashrc file so you do not have to type these lines
-sys.path.append(os.path.join(msd_code_path,'PythonSrc'))
+assert os.path.isdir(msd_subset_path),'wrong path'
 
 # imports specific to the MSD
 import hdf5_getters as GETTERS
 
-# the following function simply gives us a nice string for
-# a time lag in seconds
-def strtimedelta(starttime,stoptime):
-    return str(datetime.timedelta(seconds=stoptime-starttime))
+# print out table columns - uncomment if you want to check these
+# conn = sqlite3.connect(os.path.join(msd_subset_addf_path, 'subset_track_metadata.db'))
+# q = "PRAGMA table_info(songs)"
+# res = conn.execute(q)
+# table_info = res.fetchall()
+# conn.close()
 
-# we define this very useful function to iterate the files
+# for info in table_info:
+#     print(info)
+
+
+# iterate the files
 def apply_to_all_files(basedir,func=lambda x: x,ext='.h5'):
     """
     From a base directory, go through all subdirectories,
@@ -82,124 +59,79 @@ def apply_to_all_files(basedir,func=lambda x: x,ext='.h5'):
             func(f)       
     return cnt
 
-# we can now easily count the number of files in the dataset
-print('number of song files:',apply_to_all_files(msd_subset_data_path))
+number_of_songs = 20
 
-# let's now get all artist names in a set(). One nice property:
-# if we enter many times the same artist, only one will be kept.
-all_artist_names = set()
-
-# we define the function to apply to all files
-def func_to_get_artist_name(filename):
-    """
-    This function does 3 simple things:
-    - open the song file
-    - get artist ID and put it
-    - close the file
-    """
-    h5 = GETTERS.open_h5_file_read(filename)
-    artist_name = GETTERS.get_artist_name(h5)
-    all_artist_names.add( artist_name )
-    h5.close()
-    
-# let's apply the previous function to all files
-# we'll also measure how long it takes
-t1 = time.time()
-apply_to_all_files(msd_subset_data_path,func=func_to_get_artist_name)
-t2 = time.time()
-print('all artist names extracted in:',strtimedelta(t1,t2))
-
-
-
-
-# let's see some of the content of 'all_artist_names'
-print('found',len(all_artist_names),'unique artist names')
-for k in range(5):
-    print(list(all_artist_names)[k])
-
-# this is too long, and the work of listing artist names has already
-# been done. Let's redo the same task using an SQLite database.
-# We connect to the provided database: track_metadata.db
-conn = sqlite3.connect(os.path.join(msd_subset_addf_path,
-                                    'subset_track_metadata.db'))
-# we build the SQL query
-q = "SELECT DISTINCT artist_name FROM songs"
-# we query the database
-t1 = time.time()
+# get some random songs
+conn = sqlite3.connect(os.path.join(msd_subset_addf_path, 'subset_track_metadata.db'))
+q = "SELECT * FROM songs ORDER BY RANDOM() LIMIT " + str(number_of_songs)
 res = conn.execute(q)
-all_artist_names_sqlite = res.fetchall()
-t2 = time.time()
-print('all artist names extracted (SQLite) in:',strtimedelta(t1,t2))
-# we close the connection to the database
-conn.close()
-# let's see some of the content
-for k in range(5):
-    print(all_artist_names_sqlite[k][0])
-
-# now, let's find the artist that has the most songs in the dataset
-# what we want to work with is artist ID, not artist names. Some artists
-# have many names, usually because the song is "featuring someone else"
-conn = sqlite3.connect(os.path.join(msd_subset_addf_path,
-                                    'subset_track_metadata.db'))
-q = "SELECT DISTINCT artist_id FROM songs"
-res = conn.execute(q)
-all_artist_ids = map(lambda x: x[0], res.fetchall())
+random_songs = res.fetchall()
+print('got ' + str(number_of_songs) + ' random songs from metedata db!')
 conn.close()
 
-# The Echo Nest artist id look like:
-for k in range(4):
-    print(all_artist_ids[k])
+print('fetching actual song data for each song...')
 
-# let's count the songs from each of these artists.
-# We will do it first by iterating over the dataset.
-# we prepare a dictionary to count files
-files_per_artist = {}
-for aid in all_artist_ids:
-    files_per_artist[aid] = 0
+all_the_data = []
 
-# we prepare the function to check artist id in each file
-def func_to_count_artist_id(filename):
-    """
-    This function does 3 simple things:
-    - open the song file
-    - get artist ID and put it
-    - close the file
-    """
+# weka doesn't like the following characters in arff files
+# we might need to add more characters to this as we discover them
+def replace_characters(string):
+    return string.replace(" ", "_").replace(",", "_").replace("'", "_")
+
+# what we want to run on each file - this is super inefficient, but it works
+def func_to_desired_song_data(filename):
     h5 = GETTERS.open_h5_file_read(filename)
-    artist_id = GETTERS.get_artist_id(h5)
-    files_per_artist[artist_id] += 1
+    track_id = GETTERS.get_track_id(h5)
+    for song in random_songs:
+        if song[0] == track_id:
+            print("FOUND ONE!")
+            title = replace_characters(GETTERS.get_title(h5))
+            artist = replace_characters(GETTERS.get_artist_name(h5))
+            energy = GETTERS.get_energy(h5)
+            tempo = GETTERS.get_tempo(h5)
+            key = GETTERS.get_key(h5)
+            loudness = GETTERS.get_loudness(h5)
+
+            song_data = {
+                'title': title,
+                'artist': artist,
+                'energy': energy,
+                'tempo': tempo,
+                'key': key,
+                'loudness': loudness
+            }
+
+            all_the_data.append(song_data)
+
     h5.close()
 
-# we apply this function to all files
-apply_to_all_files(msd_subset_data_path,func=func_to_count_artist_id)
+apply_to_all_files(msd_subset_data_path,func=func_to_desired_song_data)
 
-# the most popular artist (with the most songs) is:
-most_pop_aid = sorted(files_per_artist,
-                      key=files_per_artist.__getitem__,
-                      reverse=True)[0]
-print(most_pop_aid,'has',files_per_artist[most_pop_aid],'songs.')
+# Print data
+for data in all_the_data:
+    print(data)
 
-# of course, it is more fun to have the name(s) of this artist
-# let's get it using SQLite
-conn = sqlite3.connect(os.path.join(msd_subset_addf_path,
-                                    'subset_track_metadata.db'))
-q = "SELECT DISTINCT artist_name FROM songs"
-q += " WHERE artist_id='"+most_pop_aid+"'"
-res = conn.execute(q)
-pop_artist_names = map(lambda x: x[0], res.fetchall())
-conn.close()
-print('SQL query:',q)
-print('name(s) of the most popular artist:',pop_artist_names)
+# Output arff file - the like/dislike class will be manually added
+output_filename = 'songs.arff'
+with open(output_filename,"w") as fp:
+    fp.write('''@RELATION songs
 
-# let's redo all this work in SQLite in a few seconds
-t1 = time.time()
-conn = sqlite3.connect(os.path.join(msd_subset_addf_path,
-                                    'subset_track_metadata.db'))
-q = "SELECT DISTINCT artist_id,artist_name,Count(track_id) FROM songs"
-q += " GROUP BY artist_id"
-res = conn.execute(q)
-pop_artists = res.fetchall()
-conn.close()
-t2 = time.time()
-print('found most popular artist in',strtimedelta(t1,t2))
-print(sorted(pop_artists,key=lambda x:x[2],reverse=True)[0])
+@ATTRIBUTE title string
+@ATTRIBUTE artist string
+@ATTRIBUTE energy numeric
+@ATTRIBUTE tempo numeric
+@ATTRIBUTE key numeric
+@ATTRIBUTE loudness numeric
+@ATTRIBUTE class {like, dislike}
+
+@DATA
+''')
+    for data in all_the_data:
+        fp.write("%s," % data['title'])
+        fp.write("%s," % data['artist'])
+        fp.write("%s," % data['energy'])
+        fp.write("%s," % data['tempo'])
+        fp.write("%s," % data['key'])
+        fp.write("%s," % data['loudness'])
+        # class will be manually written here
+        fp.write("\n")
