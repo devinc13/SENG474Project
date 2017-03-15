@@ -59,7 +59,7 @@ def apply_to_all_files(basedir,func=lambda x: x,ext='.h5'):
             func(f)       
     return cnt
 
-number_of_songs = 20
+number_of_songs = 30
 
 # get some random songs
 conn = sqlite3.connect(os.path.join(msd_subset_addf_path, 'subset_track_metadata.db'))
@@ -87,7 +87,7 @@ def func_to_desired_song_data(filename):
             print("FOUND ONE!")
             title = replace_characters(GETTERS.get_title(h5))
             artist = replace_characters(GETTERS.get_artist_name(h5))
-            energy = GETTERS.get_energy(h5)
+            year = GETTERS.get_year(h5)
             tempo = GETTERS.get_tempo(h5)
             key = GETTERS.get_key(h5)
             loudness = GETTERS.get_loudness(h5)
@@ -95,7 +95,7 @@ def func_to_desired_song_data(filename):
             song_data = {
                 'title': title,
                 'artist': artist,
-                'energy': energy,
+                'year': year,
                 'tempo': tempo,
                 'key': key,
                 'loudness': loudness
@@ -118,7 +118,7 @@ with open(output_filename,"w") as fp:
 
 @ATTRIBUTE title string
 @ATTRIBUTE artist string
-@ATTRIBUTE energy numeric
+@ATTRIBUTE year numeric
 @ATTRIBUTE tempo numeric
 @ATTRIBUTE key numeric
 @ATTRIBUTE loudness numeric
@@ -129,7 +129,7 @@ with open(output_filename,"w") as fp:
     for data in all_the_data:
         fp.write("%s," % data['title'])
         fp.write("%s," % data['artist'])
-        fp.write("%s," % data['energy'])
+        fp.write("%s," % data['year'])
         fp.write("%s," % data['tempo'])
         fp.write("%s," % data['key'])
         fp.write("%s," % data['loudness'])
