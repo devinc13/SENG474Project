@@ -1,0 +1,46 @@
+@RELATION songs
+
+@ATTRIBUTE title string
+@ATTRIBUTE artist string
+@ATTRIBUTE year numeric
+@ATTRIBUTE tempo numeric
+@ATTRIBUTE key numeric
+@ATTRIBUTE loudness numeric
+@ATTRIBUTE energy numeric
+@ATTRIBUTE danceability numeric
+@ATTRIBUTE time_signature numeric
+@ATTRIBUTE mode numeric
+@ATTRIBUTE hotttness numeric
+@ATTRIBUTE class {like, dislike}
+
+@DATA
+Mary_Had_A_Little_Boy_(Maestro_Mix),SNAP!,1996,121.102,6,-10.232,0.0,0.0,4,1,0.0,
+Dang_Pyar_Da ,Naseebo_Lal,0,87.03,9,-13.749,0.0,0.0,3,1,nan,
+No_Storm,Dorothy_Norwood,0,78.958,0,-12.463,0.0,0.0,4,0,nan,
+El_Amor_De_Mi_Vida,Israel_&_Moises,0,130.042,11,-10.543,0.0,0.0,4,0,nan,
+Function_Of_The_Sun,The_Ruby_Suns,2005,42.525,0,-9.876,0.0,0.0,4,1,0.509640965552,
+Song_Sung_Blue,Neil_Diamond,1972,127.275,0,-12.409,0.0,0.0,4,1,nan,
+Abstracto,Catupecu_Machu,0,130.008,3,-9.285,0.0,0.0,4,0,0.356201915923,
+Real_McKoy_Feat._Busy_Signal,Mavado,2007,125.348,7,-6.088,0.0,0.0,3,1,0.47872628848,
+Out_Of_The_Blue,Tommy_James_And_The_Shondells,1989,133.312,0,-11.693,0.0,0.0,1,1,0.641228738485,
+Champion_(World),Davol,0,102.015,1,-15.991,0.0,0.0,4,1,0.0,
+Cincinnati_Ohio,Connie_Smith,0,138.657,11,-12.469,0.0,0.0,4,1,nan,
+Missing_You,Anthony_Watson,0,120.211,2,-6.941,0.0,0.0,4,0,nan,
+Guaguanco_Raro,Richie_Ray_&_Bobby_Cruz,1970,105.75,10,-7.616,0.0,0.0,4,0,nan,
+Hate_Zone,Brand_X,1977,201.006,9,-13.358,0.0,0.0,4,1,0.624833533556,
+That_Rock_Won_t_Roll,Restless_Heart,1986,114.382,9,-13.644,0.0,0.0,4,1,nan,
+Again,Janet_Jackson,1993,129.542,0,-10.252,0.0,0.0,4,1,nan,
+Hell_On_High_Heels,Mötley_Crüe,2000,132.131,5,-8.209,0.0,0.0,4,0,nan,
+Posledny_Buntar`,Kruger,0,113.268,1,-4.952,0.0,0.0,4,1,nan,
+Look_Me_In_The_Eye,Margaret_Becker,0,141.729,7,-6.108,0.0,0.0,4,1,0.657700674314,
+Cell_(Album),Falling_Into_Place,0,138.045,6,-9.785,0.0,0.0,4,1,0.705629188657,
+Angel,Julio_Iglesias_Jr,2008,150.071,3,-7.233,0.0,0.0,4,1,0.0,
+Harmony_Of_The_Forest,Kitaro,1999,98.763,1,-18.179,0.0,0.0,4,0,0.41373983586,
+Jarabe_De_Pico,Pablo_Montero,0,101.438,9,-8.622,0.0,0.0,1,1,0.251874625218,
+Shine_For_Jesus,Sister_Rosetta_Tharpe,0,97.519,0,-21.623,0.0,0.0,4,1,0.212045405484,
+Bill_Lynch,Jerry_Lewis,0,145.333,11,-21.969,0.0,0.0,5,0,nan,
+Free,Darwin_Hobbs,0,140.085,1,-7.487,0.0,0.0,3,1,0.494489517502,
+Loud_&_Clear_(featuring_Defari__King_T_&_Butch_Cassidy),Xzibit,2000,96.57,10,-6.065,0.0,0.0,4,0,0.480934212809,
+Un_Minuto_Contigo_(One_Moment),Edmundo_Ros,0,127.443,7,-22.153,0.0,0.0,1,0,nan,
+Playgirl_s_Love,The_Five_Stairsteps,0,129.293,2,-7.692,0.0,0.0,1,1,0.386790177139,
+La_Bambola,Los_Iracundos,0,125.717,1,-10.857,0.0,0.0,1,0,nan,

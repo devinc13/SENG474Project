@@ -91,6 +91,11 @@ def func_to_desired_song_data(filename):
             tempo = GETTERS.get_tempo(h5)
             key = GETTERS.get_key(h5)
             loudness = GETTERS.get_loudness(h5)
+            energy = GETTERS.get_energy(h5)
+            danceability = GETTERS.get_danceability(h5)
+            time_signature = GETTERS.get_time_signature(h5)
+            mode = GETTERS.get_mode(h5)
+            hotttness = GETTERS.get_song_hotttnesss(h5)
 
             song_data = {
                 'title': title,
@@ -98,7 +103,12 @@ def func_to_desired_song_data(filename):
                 'year': year,
                 'tempo': tempo,
                 'key': key,
-                'loudness': loudness
+                'loudness': loudness,
+                'energy': energy,
+                'danceability': danceability,
+                'time_signature': time_signature,
+                'mode': mode,
+                'hotttness' : hotttness
             }
 
             all_the_data.append(song_data)
@@ -112,7 +122,7 @@ for data in all_the_data:
     print(data)
 
 # Output arff file - the like/dislike class will be manually added
-output_filename = 'songs.arff'
+output_filename = 'new_songs.arff'
 with open(output_filename,"w") as fp:
     fp.write('''@RELATION songs
 
@@ -122,6 +132,11 @@ with open(output_filename,"w") as fp:
 @ATTRIBUTE tempo numeric
 @ATTRIBUTE key numeric
 @ATTRIBUTE loudness numeric
+@ATTRIBUTE energy numeric
+@ATTRIBUTE danceability numeric
+@ATTRIBUTE time_signature numeric
+@ATTRIBUTE mode numeric
+@ATTRIBUTE hotttness numeric
 @ATTRIBUTE class {like, dislike}
 
 @DATA
@@ -133,5 +148,10 @@ with open(output_filename,"w") as fp:
         fp.write("%s," % data['tempo'])
         fp.write("%s," % data['key'])
         fp.write("%s," % data['loudness'])
+        fp.write("%s," % data['energy'])
+        fp.write("%s," % data['danceability'])
+        fp.write("%s," % data['time_signature'])
+        fp.write("%s," % data['mode'])
+        fp.write("%s," % data['hotttness'])
         # class will be manually written here
         fp.write("\n")
