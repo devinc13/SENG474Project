@@ -1,0 +1,10 @@
+1,1:like,1:like,,0.802
+2,1:like,1:like,,0.993
+3,2:dislike,2:dislike,,0.963
+4,2:dislike,1:like,+,0.996
+5,1:like,1:like,,0.863
+6,1:like,1:like,,0.995
+7,2:dislike,1:like,+,0.828
+8,2:dislike,2:dislike,,0.975
+9,1:like,2:dislike,+,0.99
+10,1:like,1:like,,0.866
