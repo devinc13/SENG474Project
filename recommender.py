@@ -9,6 +9,7 @@ with open('predictions.csv', 'r') as csvfile:
     predictionsList = list(predictionReader)
 
 print("Predictions:")
+print("inst#,actual,predicted,error,prediction")
 for prediction in predictionsList:
     print(prediction)
     if (prediction[2] == '1:like'):
